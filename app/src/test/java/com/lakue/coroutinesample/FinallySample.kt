@@ -1,42 +1,44 @@
 package com.lakue.coroutinesample
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import kotlinx.coroutines.*
+import org.junit.Test
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
+/**
+ * Job을 Cancel해도 꼭 마무리로 사용해야 하는 코드가 있다면
+ * finally를 사용
+ */
+class FinallySample {
+    val Tag = FinallySample::class.java.name
 
     suspend fun doOneTwoThree() = coroutineScope {
         val job1 = launch {
-            withContext(NonCancellable){
+            try {
                 println("launch1: ${Thread.currentThread().name}")
                 delay(1000L)
                 println("3!")
+            } finally {
+                println("job1 is finishing!")
+                //ex.파일을 닫아주는 코드
             }
-            delay(1000L)
-            println("job1: end")
         }
         val job2 = launch {
-            withContext(NonCancellable){
-                println("launch1: ${Thread.currentThread().name}")
+            try {
+                println("launch2: ${Thread.currentThread().name}")
                 delay(1000L)
                 println("1!")
+            } finally {
+                println("job2 is finishing!")
+                //ex.소켓을 닫아주는 코드
             }
-            delay(1000L)
-            println("job2: end")
         }
         val job3 = launch {
-            withContext(NonCancellable){
-                println("launch1: ${Thread.currentThread().name}")
+            try {
+                println("launch3: ${Thread.currentThread().name}")
                 delay(1000L)
                 println("2!")
+            } finally {
+                println("job3 is finishing!")
             }
-            delay(1000L)
-            println("job3: end")
         }
         delay(800L)
         job1.cancel()
@@ -45,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         println("4!")
     }
 
+    @Test
     fun testMain() = runBlocking {
         doOneTwoThree()
         println("runBlocking: ${Thread.currentThread().name}")

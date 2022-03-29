@@ -1,14 +1,14 @@
 package com.lakue.coroutinesample
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import kotlinx.coroutines.*
+import org.junit.Test
 
-class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
+/**
+ * Job의 Cancel을 막아주는 방법
+ * withContext(NonCancellable)를 사용해 cancel이 되지 않는 부분을 정의
+ */
+class JobNonCancelableSample {
+    val Tag = JobNonCancelableSample::class.java.name
 
     suspend fun doOneTwoThree() = coroutineScope {
         val job1 = launch {
@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         println("4!")
     }
 
+    @Test
     fun testMain() = runBlocking {
         doOneTwoThree()
         println("runBlocking: ${Thread.currentThread().name}")
